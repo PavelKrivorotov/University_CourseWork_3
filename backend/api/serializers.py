@@ -7,24 +7,24 @@ from . import validators
 class GetContentSerializer(serializers.Serializer):
     email = serializers.EmailField(read_only=True)
     first_name = serializers.CharField(max_length=150, read_only=True)
-    last_name = serializers.CharField(max_length=150, required=False)
-    birthday = serializers.DateField(required=False)
+    last_name = serializers.CharField(max_length=150, required=False, validators=[validators.check_valid_name_ru])
+    birthday = serializers.DateField(required=False, validators=[validators.check_valid_birthday])
     zodiac = serializers.CharField(max_length=11, required=False)
 
 
 class CreateContentSerializer(serializers.Serializer):
     email = serializers.EmailField(validators=[validators.check_email_not_exists])
-    first_name = serializers.CharField(max_length=150)
-    last_name = serializers.CharField(max_length=150)
-    birthday = serializers.DateField()
+    first_name = serializers.CharField(max_length=150, validators=[validators.check_valid_name_ru])
+    last_name = serializers.CharField(max_length=150, validators=[validators.check_valid_name_ru])
+    birthday = serializers.DateField(validators=[validators.check_valid_birthday])
     zodiac = serializers.CharField(max_length=11, read_only=True)
 
 
 class UpdateContentSerializer(serializers.Serializer):
     email = serializers.EmailField(validators=[validators.check_email_exists])
-    first_name = serializers.CharField(max_length=150, required=False)
-    last_name = serializers.CharField(max_length=150, required=False)
-    birthday = serializers.DateField(required=False)
+    first_name = serializers.CharField(max_length=150, required=False, validators=[validators.check_valid_name_ru])
+    last_name = serializers.CharField(max_length=150, required=False, validators=[validators.check_valid_name_ru])
+    birthday = serializers.DateField(required=False, validators=[validators.check_valid_birthday])
     zodiac = serializers.CharField(max_length=11, read_only=True)
 
 

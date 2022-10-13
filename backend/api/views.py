@@ -7,6 +7,7 @@ from rest_framework import status
 from .validators import UserModel
 from .logic import ZodiacSign
 from . import serializers
+from .jsonresponse import DictAnswer
 
 
 class GetContentList(generics.ListAPIView):
@@ -14,17 +15,22 @@ class GetContentList(generics.ListAPIView):
     serializer_class = serializers.GetContentSerializer
 
     def list(self, request, *args, **kwargs):
-        filter = self._set_filter(request)
+        ser = self.serializer_class(data=request.query_params)
+        if not ser.is_valid():
+            data = DictAnswer(error=True, errors=ser.errors)
+            return Response(data=data.get_data, status=status.HTTP_400_BAD_REQUEST)
+
+        filter = {key : value for key, value in ser.validated_data.items() if value}
         self._set_queryset(filter)
-        return super().list(request, *args, **kwargs)
+        
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+
+        data = DictAnswer(many=True, content=serializer.data)
+        return Response(data=data.get_data)
 
     def _set_queryset(self, filter):
         self.queryset = UserModel.objects.filter(**filter).all()
-
-    def _set_filter(self, request):
-        ser = self.serializer_class(data=request.query_params)
-        ser.is_valid()
-        return {key : value for key, value in ser.validated_data.items() if value}
 
 
 class CreateContent(generics.CreateAPIView, ZodiacSign):
@@ -33,13 +39,15 @@ class CreateContent(generics.CreateAPIView, ZodiacSign):
     def post(self, request, *args, **kwargs):
         serializer = serializers.CreateContentSerializer(data=request.data)
         if not serializer.is_valid():
-            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            data = DictAnswer(error=True, errors=serializer.errors)
+            return Response(data=data.get_data, status=status.HTTP_400_BAD_REQUEST)
 
         self.validated_data = serializer.validated_data
         self._set_zodiac_sign()
 
         UserModel.objects.create(**self.validated_data)
-        return Response(data=self.validated_data, status=status.HTTP_201_CREATED)
+        data = DictAnswer(content=self.validated_data)
+        return Response(data=data.get_data, status=status.HTTP_201_CREATED)
 
 
 class UpdateContent(generics.UpdateAPIView, ZodiacSign):
@@ -48,7 +56,8 @@ class UpdateContent(generics.UpdateAPIView, ZodiacSign):
     def put(self, request, *args, **kwargs):
         serializer = serializers.UpdateContentSerializer(data=request.data)
         if not serializer.is_valid():
-            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            data = DictAnswer(error=True, errors=serializer.errors)
+            return Response(data=data.get_data, status=status.HTTP_400_BAD_REQUEST)
 
         user = UserModel.objects.get(email=serializer.validated_data['email'])
 
@@ -60,19 +69,22 @@ class UpdateContent(generics.UpdateAPIView, ZodiacSign):
         UserModel.objects.filter(pk=user.pk).update(**self.validated_data)
 
         user.refresh_from_db()
-        data = serializers.GetContentSerializer(user).data
-        return Response(data=data, status=status.HTTP_202_ACCEPTED)
+        user_data = serializers.GetContentSerializer(user).data
+        data = DictAnswer(content=user_data)
+        return Response(data=data.get_data, status=status.HTTP_202_ACCEPTED)
 
 
 class DeleteContent(generics.DestroyAPIView):
     permission_classes = (AllowAny, )
 
     def delete(self, request, *args, **kwargs):
-        serializer = serializers.DeleteContentSerializer(data=request.data)
+        serializer = serializers.DeleteContentSerializer(data=request.query_params)
         if not serializer.is_valid():
-            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            data = DictAnswer(error=True, errors=serializer.errors)
+            return Response(data=data.get_data, status=status.HTTP_400_BAD_REQUEST)
 
         user = UserModel.objects.get(email=serializer.validated_data['email'])
         user.delete()
-        data = serializers.GetContentSerializer(user).data
-        return Response(data=data, status=status.HTTP_200_OK)
+        user_data = serializers.GetContentSerializer(user).data
+        data = DictAnswer(content=user_data)
+        return Response(data=data.get_data, status=status.HTTP_200_OK)
