@@ -208,6 +208,37 @@ void UserManager::del(QUrlQuery urlQuery, QUrl urlAddr) {
 }
 
 
+void UserManager::sortUserList(int userAttributeIndex) {
+    if ((userAttributeIndex != 0) && (userAttributeIndex != 1)) { return; }
+
+    for (int index1 = 0; index1 < _userList->size() - 1; index1++) {
+        for (int index2 = index1 + 1; index2 < _userList->size(); index2++) {
+            User *currentUser = _userList->at(index1);
+            User *nextUser = _userList->at(index2);
+
+            switch (userAttributeIndex) {
+                case 0:
+                    if (nextUser->getFirstName() < currentUser->getFirstName()) {
+                        _userList->replace(index1, nextUser);
+                        _userList->replace(index2, currentUser);
+                    }
+                    break;
+
+                case 1:
+                    if (nextUser->getLastName() < currentUser->getLastName()) {
+                        _userList->replace(index1, nextUser);
+                        _userList->replace(index2, currentUser);
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
+}
+
+
 void UserManager::showMessage(QMessageBox::Icon icon, QString title, QString text) {
     _messageBox->setIcon(icon);
     _messageBox->setWindowTitle(title);

@@ -40,6 +40,8 @@ private:
 
     void deleteRow();
 
+    void orderRows(int headerIndex);
+
     void setUser(int index, QString firstName, QString lastName, QString emailAddr,
                  QString birthDay, QString zodiacSign);
 

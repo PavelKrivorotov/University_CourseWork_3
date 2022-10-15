@@ -16,6 +16,10 @@
   <property name="windowTitle">
    <string>Add user dialog</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../resources.qrc">
+    <normaloff>:/icon/icons/add_icon.png</normaloff>:/icon/icons/add_icon.png</iconset>
+  </property>
   <layout class="QGridLayout" name="gridLayout" rowstretch="1,0">
    <item row="0" column="0">
     <layout class="QGridLayout" name="gridLayout_2">
@@ -179,6 +183,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

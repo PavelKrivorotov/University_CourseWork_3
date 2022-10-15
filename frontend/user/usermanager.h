@@ -20,6 +20,8 @@ public:
 
     QList<User*> * getUserList();
 
+    void sortUserList(int userAttributeIndex);
+
     void changeUserList(QNetworkReply *reply);
 
     void addUser(QNetworkReply *reply);

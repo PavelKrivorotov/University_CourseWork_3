@@ -29,6 +29,8 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
     connect(_userManager, &UserManager::addUserSignal, this, &MainWindow::insertRow);
     connect(_userManager, &UserManager::changeUserSignal, this, &MainWindow::refreshRow);
     connect(_userManager, &UserManager::deleteUserSignal, this, &MainWindow::deleteRow);
+
+    connect(ui->ContentTW->horizontalHeader(), &QHeaderView::sectionClicked, this, &MainWindow::orderRows);
 }
 
 
@@ -97,6 +99,14 @@ void MainWindow::deleteRow() {
 }
 
 
+void MainWindow::orderRows(int headerIndex) {
+    _userManager->sortUserList(headerIndex);
+    showData();
+
+    qDebug() << "Click to horizontalHeaderItem: " << headerIndex;
+}
+
+
 void MainWindow::setUser(int index, QString firstName, QString lastName, QString emailAddr,
                          QString birthDay, QString zodiacSign){
     QLabel *_firstName = new QLabel(ui->ContentTW);
@@ -120,10 +130,12 @@ void MainWindow::setUser(int index, QString firstName, QString lastName, QString
     _zodiacSign->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 
     QPushButton *changeBtn = new QPushButton(ui->ContentTW);
-    changeBtn->setText("Change");
+    changeBtn->setIcon(QIcon(":/icon/icons/change_icon.png"));
+    changeBtn->setIconSize(QSize(25, 25));
 
     QPushButton *delBtn = new QPushButton(ui->ContentTW);
-    delBtn->setText("Delete");
+    delBtn->setIcon(QIcon(":/icon/icons/delete_icon.png"));
+    delBtn->setIconSize(QSize(25, 25));
 
 
     connect(changeBtn, &QPushButton::clicked, _changeDialog, [this, index](){
