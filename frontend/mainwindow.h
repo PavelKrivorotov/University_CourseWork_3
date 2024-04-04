@@ -32,15 +32,15 @@ public:
     FilterDialog * getFilterDialog();
 
 private:
-    void showData();
+//    void showData();
 
-    void insertRow(int index, User *addUser);
+//    void insertRow(int index, User *addUser);
 
-    void refreshRow(int index, User *newUser);
+//    void refreshRow(int index, User *newUser);
 
-    void deleteRow();
+//    void deleteRow();
 
-    void orderRows(int headerIndex);
+//    void orderRows(int headerIndex);
 
     void setUser(int index, QString firstName, QString lastName, QString emailAddr,
                  QString birthDay, QString zodiacSign);
@@ -62,6 +62,16 @@ private:
     UserManager *_userManager;
 
 private slots:
+    void showData();
+
+    void insertRow(int index, User *addUser);
+
+    void refreshRow(int index, User *newUser);
+
+    void deleteRow();
+
+    void orderRows(int headerIndex);
+
     void onSearchBtnClicked();
 
 signals:

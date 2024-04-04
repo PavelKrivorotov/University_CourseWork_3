@@ -7,7 +7,7 @@ class ZodiacSign:
     The every attributes structure is ((start date), (end date), (Russian name)).
     The every tuple of date struct is (day, month).
     """
-
+    
     _aries =         ((21, 3), (20, 4), ('овен'))
     _taurus =        ((21, 4), (21, 5), ('телец'))
     _gemini =        ((22, 5), (21, 6), ('близнецы'))

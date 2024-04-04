@@ -38,7 +38,7 @@ def check_email_exists(email):
 def check_email_not_exists(email):
     if not UserModel.objects.filter(email=email).exists():
         return email
-    raise ValidationError('This E-mail address doese exists!')
+    raise ValidationError('This E-mail address exists!')
 
 
 def check_valid_name_en(name):
