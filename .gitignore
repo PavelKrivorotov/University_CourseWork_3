@@ -1,0 +1,4 @@
+/venv
+/build-frontend-Desktop_Qt_6_2_3_MinGW_64_bit-Debug
+
+*.pyc
